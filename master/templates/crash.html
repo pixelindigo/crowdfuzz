@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Crash #{{ crash.id }}</h1>
+<p>Reported at {{ crash.reported_at }}</p>
+  <div>Path: {{ crash.path }}</div>
+  <div>Instruction: {{ "0x%x" | format(crash.instruction) }}</div>
+  <div>Binary offset: {{ "0x%x" | format(crash.offset) }}</div>
+  <p><pre>{{ crash.log }}</pre></p>
+  {% for packet in packets %}
+  <p><pre>{{ packet }}</pre></p>
+  {% endfor %}
+{% endblock %}

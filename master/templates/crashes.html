@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Crashes</h1>
+    Total: {{ crashes.count() }} ({{unique.count()}} unique)
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Signal</th>
+          <th scope="col">Reason</th>
+          <th scope="col">Instruction</th>
+          <th scope="col">Offset</th>
+          <th scope="col">Reported at</th>
+        </tr>
+      </thead>
+      <tbody>
+    {{ unique_only }}
+    {% for crash in crashes %}
+        <tr>
+          <th scope="row"><a href="/crash/{{crash.id}}">#{{ crash.id }}</a></th>
+          <td>{{ crash.signal }}</td>
+          <td>{{ crash.reason }}</td>
+          <td>{{ "0x%x" | format(crash.instruction) }}</td>
+          <td>{{ "0x%x" | format(crash.offset) }}</td>
+          <td>{{ crash.reported_at }}</td>
+        </tr>
+    {% endfor %}
+      </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+{% endblock %}

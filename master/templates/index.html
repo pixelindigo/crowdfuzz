@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Dashboard</h1>
+  <div>
+      <p>Current sequence: {{ target.processed }} / {{ target.last_sequence }}</p>
+      <p>Crashes: {{ crashes }} ({{ unique }} unique)</p>
+    {% if target.processed >= target.last_sequence %}
+    <p>Started at: {{ target.started_at }}</p>
+    <p>Completed at: {{ target.completed_at }}</p>
+    <p>Elapsed: {{ target.completed_at  - target.started_at}}</p>
+    {% endif %}
+    <div class="progress">
+        <div class="progress-bar" role="progressbar"
+          style="width:{{target.processed * (100 / target.last_sequence)}}%">
+            {{ target.processed }} / {{ target.last_sequence }}
+        </div>
+    </div>
+    <div>
+    {% if target.processed >= target.last_sequence %}
+    <button class="btn btn-primary mt-2" role="button" disabled>Start</button>
+    {% elif target.running %}
+        <a class="btn btn-outline-primary mt-2" href="/api/task/stop" role="button">Stop</a>
+    {% else %}
+        <a class="btn btn-primary mt-2" href="/api/task/start" role="button">Start</a>
+    {% endif %}
+    </div>
+  </div>
+{% endblock %}
