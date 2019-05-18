@@ -2,3 +2,4 @@ requests==2.21.0
 scapy==2.4.2
 python-ptrace==0.9.3
 distorm3==3.4.1
+construct==2.9.45

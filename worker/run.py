@@ -1,8 +1,7 @@
 from api import RemoteMaster
 from local import LocalMaster
 from worker import Worker
-from testtarget import TestTarget
-from ptracetarget import PtraceTarget
+from hltarget import HLTarget
 import time
 import os
 
@@ -15,7 +14,7 @@ if __name__ == '__main__':
         print("Listening for ", master_uri)
         master = RemoteMaster(master_uri)
 
-    w = Worker(master, PtraceTarget())
+    w = Worker(master, HLTarget())
     start = time.time()
     w.run()
     end = time.time()

@@ -8,31 +8,41 @@ import signal
 
 class PtraceTarget(Target):
 
-    def __init__(self):
+    def __init__(self, cmd, env=None):
         super().__init__(proto['base'], proto['messages'])
         self.pid = None
+        self.cmd = cmd
+        self.env = env
 
-    def start(self):
+    def start(self, addr):
         if self.is_running():
             return
-        self.pid = createChild(["./server"], False, None)
+        self.pid = createChild(self.cmd, False, self.env)
         self.dbg = PtraceDebugger()
         self.process = self.dbg.addProcess(self.pid, True)
         self.process.cont()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.addr = ('127.0.0.1', 31337)
-    
+        self.sock.bind(('127.0.0.1', 55555))
+        self.addr = addr
+
     def stop(self):
         self.dbg.quit()
         self.pid = None
 
     def send(self, data):
-        self.sock.sendto(b'\xff\xff\xff\xff' + data, self.addr)
+        self.sock.sendto(data, self.addr)
+
+    def recv(self, max_bytes):
+        data, addr = self.sock.recvfrom(max_bytes)
+        return data
 
     def is_running(self):
         if self.pid is None:
             return False
         self.event = self.dbg.waitProcessEvent(self.pid, blocking=False)
+        #if self.event != None and (self.event.signum == signal.SIGCHLD or self.event.signum == signal.SIGINT):
+        #    self.process.cont()
+        #    self.event = None
         return self.event == None
 
     def is_crashed(self):
@@ -74,4 +84,3 @@ class PtraceTarget(Target):
                     int(offset, 16),
                     path))
         return res
-

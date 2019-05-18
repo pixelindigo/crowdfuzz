@@ -1,35 +1,65 @@
 from scapy.all import *
 
-CMD_NOP = 0x0
-CMD_ECHO = 0x1
-CMD_READ = 0x2
-CMD_WRITE = 0x3
+clc_bad = 0x0
+clc_nop = 0x1
+clc_move = 0x2
+clc_stringcmd = 0x3
+clc_delta = 0x4
+clc_resourcelist = 0x5
+clc_tmove = 0x6
+clc_fileconsistency = 0x7
+clc_voicedata = 0x8
+clc_hltv = 0x9
+clc_cvarvalue = 0xa
+clc_cvarvalue2 = 0xb
+
+clc_commands = { 0x0: 'clc_bad',
+                 0x1: 'clc_nop',
+                 0x2: 'clc_move',
+                 0x3: 'clc_stringcmd',
+                 0x4: 'clc_delta',
+                 0x5: 'clc_resourcelist',
+                 0x6: 'clc_tmove',
+                 0x7: 'clc_fileconsistency',
+                 0x8: 'clc_voicedata',
+                 0x9: 'clc_hltv',
+                 0xa: 'clc_cvarvalue',
+                 0xb: 'clc_cvarvalue2'
+                 }
+
 
 class Base(Packet):
     name = "BasePacket"
-    fields_desc=[ ByteEnumField("cmd", 0, [CMD_NOP, CMD_ECHO, CMD_READ, CMD_WRITE]) ]
+    fields_desc=[ ByteEnumField("cmd", 0, clc_commands) ]
 
 class Nop(Packet):
     name = "NopPacket"
     fields_desc=[]
 
-class Echo(Packet):
-    name = "EchoPacket"
-    fields_desc=[ XIntField("value", 0) ]
+class StringCmd(Packet):
+    name = "StringCmdPacket"
+    fields_desc=[ StrNullField("string", "") ]
 
-class Read(Packet):
-    name = "ReadPacket"
-    fields_desc=[ XIntField("key", 0) ]
+class VoiceData(Packet):
+    name = "VoiceDataPacket"
+    fields_desc=[ FieldLenField("len", None, fmt="<H", length_of="data"),
+                    StrLenField("data", "", length_from = lambda pkt: pkt.len) ]
 
-class Write(Packet):
-    name = "WritePacket"
-    fields_desc=[ XLEIntField("key", 0),
-                  XLEIntField("value", 0)]
+class CVarValue(Packet):
+    name = "CVarValuePacket"
+    fields_desc=[ StrNullField("string", "") ]
 
-bind_layers(Base, Nop, cmd=CMD_NOP)
-bind_layers(Base, Echo, cmd=CMD_ECHO)
-bind_layers(Base, Read, cmd=CMD_READ)
-bind_layers(Base, Write, cmd=CMD_WRITE)
+class CVarValue2(Packet):
+    name = "CVarValue2Packet"
+    fields_desc=[ LEShortField("val", 0),
+                    StrNullField("string1", ""),
+                    StrNullField("string2", "") ]
+
+bind_layers(Base, Nop, cmd=clc_nop)
+bind_layers(Base, StringCmd, cmd=clc_stringcmd)
+bind_layers(Base, VoiceData, cmd=clc_voicedata)
+bind_layers(Base, CVarValue, cmd=clc_cvarvalue)
+bind_layers(Base, CVarValue2, cmd=clc_cvarvalue2)
 
 proto = {'base': Base(),
-         'messages': [Nop(), Echo(), Read(), Write()]}
+         'messages': [Nop(), StringCmd(), VoiceData()]}

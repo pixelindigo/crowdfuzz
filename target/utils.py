@@ -1,11 +1,3 @@
-BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-def to_base(s, b):
-    res = ""
-    while s:
-        res += BASE[s % b]
-        s //= b
-    return res[::-1] or "0"
-
 import struct
 
 MUNGIFY_TABLE = [ 0x7A, 0x64, 0x05, 0xF1, 0x1B, 0x9B, 0xA0, 0xB5, 0xCA, 0xED, 0x61, 0x0D, 0x4A, 0xDF, 0x8E, 0xC7 ]
@@ -60,3 +52,7 @@ def unmunge2(data, seq):
 
 def unmunge3(data, seq):
     return unmunge(data, MUNGIFY_TABLE3, seq)
+
+if __name__ == '__main__':
+    print(unmunge(b'\x72\x6a\x64\x44\x34\x6c\x73\x77\x4d\x64\x2e\x22\x00', MUNGIFY_TABLE2, 0x47))
+    print(munge2(unmunge2(b'\x72\x6a\x64\x44\x34\x6c\x73\x77\x4d\x64\x2e\x22\x00', 0x47), 0x47))

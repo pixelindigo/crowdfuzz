@@ -7,6 +7,8 @@ class Target:
         self.packets = packets
 
     def sequence(self, index):
+        print('len packets:', len(self.packets))
+        print('packets:', self.packets)
         return [self.base / fuzz(self.packets[int(x)])
                 for x in to_base(index, len(self.packets))]
 

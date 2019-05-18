@@ -67,7 +67,7 @@ def next_task():
     return jsonify(status="OK", task={
         'start': start,
         'end': end,
-        'iterations': 100
+        'iterations': 1000
         })
 
 @app.route("/api/task/<int:task_id>/completed", methods=['POST'])

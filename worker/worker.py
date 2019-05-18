@@ -20,6 +20,7 @@ class Worker:
                 print('processing task', task)
                 self.target.start()
                 seq = self.target.sequence(task)
+                print(seq)
                 for _ in range(iterations):
                     testcase = []
                     for msg in seq:
@@ -46,6 +47,7 @@ class Worker:
                         # let OS cleanup resources
                         print("Restarting server after", testcase)
                         self.target.start()
+                self.target.stop()
                 self.master.task_completed(task)
         self.target.stop()
         print("completed")
